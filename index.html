@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circunferencia Goniométrica Interactiva - Razones Trigonométricas</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .mono-num {
+      font-family: 'Fira Code', monospace;
+    }
+    /* Estilos personalizados para el slider */
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #2563eb;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+      transition: transform 0.1s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+    canvas {
+      touch-action: none;
+      user-select: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+
+  <!-- Encabezado -->
+  <header class="border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-0 z-30 px-4 py-3 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 3v9l6 3"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            Circunferencia Goniométrica
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">R = 1</span>
+          </h1>
+          <p class="text-xs text-slate-500">Visualizador interactivo de razones trigonométricas</p>
+        </div>
+      </div>
+      
+      <!-- Controles rápidos del header -->
+      <div class="flex items-center gap-2">
+        <button id="btnPlayPause" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all text-white shadow-sm">
+          <svg id="playIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <span id="playText">Animar</span>
+        </button>
+        <button id="btnReset" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 transition-all shadow-sm">
+          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Reset (0°)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="max-w-7xl mx-auto w-full p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+    
+    <!-- Columna Izquierda: Gráfico Interactivo de la Circunferencia -->
+    <div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-4">
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm relative flex flex-col flex-1">
+        
+        <!-- Barra de herramientas superior del canvas -->
+        <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-100 gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 bg-slate-100 px-2.5 py-1 rounded-md text-slate-700 font-medium">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Arrastra el punto P sobre la circunferencia
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btnZoomOut" title="Reducir zoom" class="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+            </button>
+            <button id="btnZoomReset" title="Zoom por defecto" class="px-2 py-1 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 mono-num text-[11px] font-semibold transition">
+              1x
+            </button>
+            <button id="btnZoomIn" title="Aumentar zoom" class="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Área del Canvas interactivo con fondo blanco -->
+        <div class="relative w-full flex-1 min-h-[400px] sm:min-h-[480px] flex items-center justify-center my-2 bg-white rounded-xl overflow-hidden border border-slate-100">
+          <canvas id="trigCanvas" class="w-full h-full cursor-crosshair"></canvas>
+          <div id="tooltip" class="absolute pointer-events-none hidden px-2.5 py-1.5 rounded-lg bg-white/95 border border-slate-300 text-xs shadow-xl text-slate-800 z-20 backdrop-blur-sm"></div>
+        </div>
+
+        <!-- Selector Modular de Razones (Aisladas o Simultáneas) -->
+        <div class="pt-3 border-t border-slate-100 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span class="font-bold text-slate-600 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Razones a Representar:
+            </span>
+            <!-- Botones de aislamiento rápido -->
+            <div class="flex flex-wrap items-center gap-1 text-[11px]">
+              <span class="text-slate-400 mr-1 hidden sm:inline">Aislar:</span>
+              <button id="btnOnlySin" class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300 font-medium transition">Solo Sen</button>
+              <button id="btnOnlyCos" class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-300 font-medium transition">Solo Cos</button>
+              <button id="btnOnlyTan" class="px-2 py-0.5 rounded bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-300 font-medium transition">Solo Tan</button>
+              <button id="btnPresetBasic" class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 font-medium transition">Básicas</button>
+              <button id="btnPresetAll" class="px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-300 font-medium transition">Todas (6)</button>
+              <button id="btnPresetNone" class="px-2 py-0.5 rounded bg-white text-slate-500 hover:bg-slate-100 border border-slate-300 font-medium transition">Limpiar</button>
+            </div>
+          </div>
+
+          <!-- Checkboxes individuales para las 6 razones -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 text-xs">
+            <label class="flex items-center gap-2 cursor-pointer select-none bg-emerald-50/60 hover:bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200 transition">
+              <input type="checkbox" id="chkSin" checked class="rounded accent-emerald-600 w-3.5 h-3.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0"></span>
+              <span class="font-semibold text-emerald-800">Seno</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer select-none bg-blue-50/60 hover:bg-blue-50 px-2.5 py-1.5 rounded-lg border border-blue-200 transition">
+              <input type="checkbox" id="chkCos" checked class="rounded accent-blue-600 w-3.5 h-3.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0"></span>
+              <span class="font-semibold text-blue-800">Coseno</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer select-none bg-amber-50/60 hover:bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-200 transition">
+              <input type="checkbox" id="chkTan" checked class="rounded accent-amber-600 w-3.5 h-3.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-600 shrink-0"></span>
+              <span class="font-semibold text-amber-800">Tangente</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer select-none bg-cyan-50/60 hover:bg-cyan-50 px-2.5 py-1.5 rounded-lg border border-cyan-200 transition">
+              <input type="checkbox" id="chkCot" class="rounded accent-cyan-600 w-3.5 h-3.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-600 shrink-0"></span>
+              <span class="font-semibold text-cyan-800">Cotangente</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer select-none bg-purple-50/60 hover:bg-purple-50 px-2.5 py-1.5 rounded-lg border border-purple-200 transition">
+              <input type="checkbox" id="chkSec" class="rounded accent-purple-600 w-3.5 h-3.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-600 shrink-0"></span>
+              <span class="font-semibold text-purple-800">Secante</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer select-none bg-pink-50/60 hover:bg-pink-50 px-2.5 py-1.5 rounded-lg border border-pink-200 transition">
+              <input type="checkbox" id="chkCsc" class="rounded accent-pink-600 w-3.5 h-3.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-pink-600 shrink-0"></span>
+              <span class="font-semibold text-pink-800">Cosecante</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Barra de control de ángulo y doble escala (Grados y Radianes en fracciones de PI) -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+        
+        <!-- Doble Control Sincronizado -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-2 border-b border-slate-100">
+          
+          <!-- Escala 1: Grados Sexagesimales (0º a 360º) -->
+          <div class="space-y-1.5 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <div class="flex justify-between items-center text-xs text-slate-700 font-medium">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                <span class="font-bold text-slate-800">Escala Grados (°)</span>
+              </span>
+              <div class="flex items-center gap-1">
+                <input id="angleInput" type="number" min="0" max="360" step="1" value="45" class="w-16 h-7 bg-white border border-slate-300 rounded-lg px-1.5 text-center text-slate-800 font-semibold mono-num focus:border-blue-500 focus:outline-none text-xs shadow-sm">
+                <span class="text-slate-500 text-xs font-semibold">°</span>
+              </div>
+            </div>
+            <input id="angleSlider" type="range" min="0" max="360" step="1" value="45" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer focus:outline-none accent-blue-600">
+            <div class="flex justify-between text-[11px] text-slate-500 mono-num px-0.5 font-medium">
+              <span>0°</span>
+              <span>90°</span>
+              <span>180°</span>
+              <span>270°</span>
+              <span>360°</span>
+            </div>
+          </div>
+
+          <!-- Escala 2: Radianes en FRACCIONES DE PI -->
+          <div class="space-y-1.5 bg-purple-50/60 p-3 rounded-xl border border-purple-200">
+            <div class="flex justify-between items-center text-xs text-slate-700 font-medium">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
+                <span class="font-bold text-purple-900">Escala Radianes (Fracciones de π)</span>
+              </span>
+              <div class="flex items-center gap-1">
+                <span id="radDisplayBadge" class="h-7 px-2.5 bg-white border border-purple-300 rounded-lg flex items-center justify-center text-purple-800 font-bold mono-num text-xs shadow-sm">
+                  π / 4
+                </span>
+                <span class="text-purple-700 text-xs font-semibold">rad</span>
+              </div>
+            </div>
+            <!-- Slider sincronizado directamente con paso angular equivalente para mantener fracciones de pi exactas -->
+            <input id="radSlider" type="range" min="0" max="360" step="1" value="45" class="w-full h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer focus:outline-none accent-purple-600">
+            <div class="flex justify-between text-[11px] text-purple-700 mono-num px-0.5 font-semibold">
+              <span>0</span>
+              <span>π/2</span>
+              <span>π</span>
+              <span>3π/2</span>
+              <span>2π</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Botones rápidos de ángulos notables (rotulados con fracciones de PI) -->
+        <div>
+          <div class="text-[11px] font-bold text-slate-600 mb-2 uppercase tracking-wider flex items-center justify-between">
+            <span>Ángulos Notables (Fracciones Reducidas de π)</span>
+            <div class="flex items-center gap-2">
+              <button id="btnStepMinus" class="px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold mono-num shadow-sm transition">-1°</button>
+              <button id="btnStepPlus" class="px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold mono-num shadow-sm transition">+1°</button>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="0">0 (0)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="30">30° (π/6)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="45">45° (π/4)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="60">60° (π/3)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="90">90° (π/2)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="120">120° (2π/3)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="135">135° (3π/4)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="150">150° (5π/6)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="180">180° (π)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="210">210° (7π/6)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="225">225° (5π/4)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="240">240° (4π/3)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="270">270° (3π/2)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="300">300° (5π/3)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="315">315° (7π/4)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="330">330° (11π/6)</button>
+            <button class="notable-btn px-2 py-1 text-xs rounded-lg bg-white hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 border border-slate-200 text-slate-700 mono-num font-medium shadow-sm transition" data-angle="360">360° (2π)</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Columna Derecha: Panel de Datos Matemáticos y Razones -->
+    <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-4">
+      
+      <!-- Panel de Ángulo y Cuadrante -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center justify-between">
+          <span>Estado del Ángulo</span>
+          <span id="quadrantBadge" class="px-2.5 py-0.5 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            Cuadrante I
+          </span>
+        </h2>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <span class="text-[11px] text-slate-500 block font-semibold">Sexagesimal</span>
+            <div class="text-xl font-bold text-slate-900 mono-num mt-0.5" id="valDegrees">45°</div>
+            <span class="text-[11px] text-slate-500 font-medium" id="valGradients">50.00 grad</span>
+          </div>
+          <div class="bg-purple-50/70 p-3 rounded-xl border border-purple-200">
+            <span class="text-[11px] text-purple-700 block font-semibold">Radianes (Exacto)</span>
+            <div class="text-xl font-bold text-purple-800 mono-num mt-0.5" id="valRadiansExact">π / 4</div>
+            <span class="text-[11px] text-purple-600 font-medium" id="valRadNote">Fracción irreducible de π</span>
+          </div>
+        </div>
+
+        <div class="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span class="text-slate-600 font-medium">Punto en el círculo <span class="font-bold text-slate-800">P(cos α, sen α)</span>:</span>
+          <span class="mono-num font-bold text-slate-900 text-sm" id="valCoordinates">(0.707, 0.707)</span>
+        </div>
+      </div>
+
+      <!-- Tabla de Razones Principales -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center justify-between">
+          <span>Razones Principales</span>
+          <span class="text-[11px] font-normal text-slate-400">Magnitudes y signos</span>
+        </h2>
+
+        <div class="space-y-2.5">
+          
+          <!-- Seno Card -->
+          <div class="p-3 rounded-xl bg-emerald-50/40 border-l-4 border-emerald-600 border-y border-r border-slate-200 transition">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                <span class="font-bold text-sm text-emerald-800">sen(α)</span>
+                <span class="text-xs text-slate-500 hidden sm:inline">(ordenada vertical Y)</span>
+              </div>
+              <div class="text-right">
+                <span id="valSinExact" class="text-xs font-bold text-emerald-700 mono-num block">√2 / 2</span>
+                <span id="valSin" class="text-lg font-bold text-emerald-900 mono-num">+0.7071</span>
+              </div>
+            </div>
+            <div class="mt-2 w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+              <div id="barSin" class="bg-emerald-600 h-full rounded-full transition-all duration-100" style="width: 70.71%;"></div>
+            </div>
+          </div>
+
+          <!-- Coseno Card -->
+          <div class="p-3 rounded-xl bg-blue-50/40 border-l-4 border-blue-600 border-y border-r border-slate-200 transition">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+                <span class="font-bold text-sm text-blue-800">cos(α)</span>
+                <span class="text-xs text-slate-500 hidden sm:inline">(abscisa horizontal X)</span>
+              </div>
+              <div class="text-right">
+                <span id="valCosExact" class="text-xs font-bold text-blue-700 mono-num block">√2 / 2</span>
+                <span id="valCos" class="text-lg font-bold text-blue-900 mono-num">+0.7071</span>
+              </div>
+            </div>
+            <div class="mt-2 w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+              <div id="barCos" class="bg-blue-600 h-full rounded-full transition-all duration-100" style="width: 70.71%;"></div>
+            </div>
+          </div>
+
+          <!-- Tangente Card -->
+          <div class="p-3 rounded-xl bg-amber-50/40 border-l-4 border-amber-600 border-y border-r border-slate-200 transition">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span>
+                <span class="font-bold text-sm text-amber-800">tan(α)</span>
+                <span class="text-xs text-slate-500 hidden sm:inline">(sen/cos sobre x=1)</span>
+              </div>
+              <div class="text-right">
+                <span id="valTanExact" class="text-xs font-bold text-amber-700 mono-num block">1</span>
+                <span id="valTan" class="text-lg font-bold text-amber-900 mono-num">+1.0000</span>
+              </div>
+            </div>
+            <div class="mt-2 w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+              <div id="barTan" class="bg-amber-600 h-full rounded-full transition-all duration-100" style="width: 50%;"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Identidad fundamental y razones recíprocas -->
+        <div class="pt-3 border-t border-slate-100 space-y-2.5">
+          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+            <div class="flex justify-between items-center text-slate-700 mb-1">
+              <span class="font-semibold text-slate-600">Identidad Fundamental:</span>
+              <span class="mono-num text-slate-900 font-bold">sen²α + cos²α = 1</span>
+            </div>
+            <div class="text-[11px] text-slate-500 mono-num flex justify-between font-medium">
+              <span id="valPythagoras">(0.7071)² + (0.7071)²</span>
+              <span class="text-emerald-700 font-bold">= 1.0000</span>
+            </div>
+          </div>
+
+          <!-- Razones Secundarias (Recíprocas) -->
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+              <span class="text-[10px] text-slate-500 font-bold block">csc(α) = 1/sen</span>
+              <span id="valCsc" class="text-xs font-bold text-pink-700 mono-num mt-0.5 block">+1.414</span>
+            </div>
+            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+              <span class="text-[10px] text-slate-500 font-bold block">sec(α) = 1/cos</span>
+              <span id="valSec" class="text-xs font-bold text-purple-700 mono-num mt-0.5 block">+1.414</span>
+            </div>
+            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+              <span class="text-[10px] text-slate-500 font-bold block">cot(α) = 1/tan</span>
+              <span id="valCot" class="text-xs font-bold text-cyan-700 mono-num mt-0.5 block">+1.000</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Ayuda pedagógica / Resumen de Cuadrantes -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm text-xs space-y-2">
+        <div class="font-bold text-slate-700 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          Signos de las Razones por Cuadrante
+        </div>
+        <div class="grid grid-cols-4 gap-1.5 text-center text-[10px] mono-num pt-1">
+          <div id="qBox1" class="p-1.5 rounded-lg bg-slate-50 border border-slate-200 transition-all">
+            <span class="font-bold text-slate-700 block">I (0°-90°)</span>
+            <span class="text-emerald-700 font-semibold">sen +</span><br>
+            <span class="text-blue-700 font-semibold">cos +</span><br>
+            <span class="text-amber-700 font-semibold">tan +</span>
+          </div>
+          <div id="qBox2" class="p-1.5 rounded-lg bg-slate-50 border border-slate-200 transition-all">
+            <span class="font-bold text-slate-700 block">II (90°-180°)</span>
+            <span class="text-emerald-700 font-semibold">sen +</span><br>
+            <span class="text-rose-600 font-semibold">cos -</span><br>
+            <span class="text-rose-600 font-semibold">tan -</span>
+          </div>
+          <div id="qBox3" class="p-1.5 rounded-lg bg-slate-50 border border-slate-200 transition-all">
+            <span class="font-bold text-slate-700 block">III (180°-270°)</span>
+            <span class="text-rose-600 font-semibold">sen -</span><br>
+            <span class="text-rose-600 font-semibold">cos -</span><br>
+            <span class="text-amber-700 font-semibold">tan +</span>
+          </div>
+          <div id="qBox4" class="p-1.5 rounded-lg bg-slate-50 border border-slate-200 transition-all">
+            <span class="font-bold text-slate-700 block">IV (270°-360°)</span>
+            <span class="text-rose-600 font-semibold">sen -</span><br>
+            <span class="text-blue-700 font-semibold">cos +</span><br>
+            <span class="text-rose-600 font-semibold">tan -</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Pie de página -->
+  <footer class="border-t border-slate-200 bg-white py-3 px-4 text-center text-xs text-slate-500 font-medium">
+    <p>Circunferencia Trigonométrica (Goniométrica) con radio unitario $R = 1$. Fondo blanco y escala de radianes exacta en fracciones irreducibles de $\pi$.</p>
+  </footer>
+
+  <!-- Lógica JavaScript Interactiva -->
+  <script>
+    // Variables de Estado de la Aplicación
+    let currentAngle = 45.0; // en grados sexagesimales
+    let isPlaying = false;
+    let animFrameId = null;
+    let isDragging = false;
+    let zoomLevel = 1.0;
+
+    // Configuración modular de visualización para las 6 razones
+    const showOptions = {
+      sin: true,
+      cos: true,
+      tan: true,
+      cot: false,
+      sec: false,
+      csc: false
+    };
+
+    // Referencias al DOM
+    const canvas = document.getElementById('trigCanvas');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('tooltip');
+
+    const angleSlider = document.getElementById('angleSlider');
+    const angleInput = document.getElementById('angleInput');
+    const radSlider = document.getElementById('radSlider');
+    const radDisplayBadge = document.getElementById('radDisplayBadge');
+
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const playText = document.getElementById('playText');
+    const playIcon = document.getElementById('playIcon');
+    const btnReset = document.getElementById('btnReset');
+    const btnStepMinus = document.getElementById('btnStepMinus');
+    const btnStepPlus = document.getElementById('btnStepPlus');
+
+    const chkSin = document.getElementById('chkSin');
+    const chkCos = document.getElementById('chkCos');
+    const chkTan = document.getElementById('chkTan');
+    const chkCot = document.getElementById('chkCot');
+    const chkSec = document.getElementById('chkSec');
+    const chkCsc = document.getElementById('chkCsc');
+
+    const btnOnlySin = document.getElementById('btnOnlySin');
+    const btnOnlyCos = document.getElementById('btnOnlyCos');
+    const btnOnlyTan = document.getElementById('btnOnlyTan');
+    const btnPresetBasic = document.getElementById('btnPresetBasic');
+    const btnPresetAll = document.getElementById('btnPresetAll');
+    const btnPresetNone = document.getElementById('btnPresetNone');
+
+    const btnZoomIn = document.getElementById('btnZoomIn');
+    const btnZoomOut = document.getElementById('btnZoomOut');
+    const btnZoomReset = document.getElementById('btnZoomReset');
+
+    // Elementos de métricas
+    const valDegrees = document.getElementById('valDegrees');
+    const valGradients = document.getElementById('valGradients');
+    const valRadiansExact = document.getElementById('valRadiansExact');
+    const valCoordinates = document.getElementById('valCoordinates');
+    const quadrantBadge = document.getElementById('quadrantBadge');
+
+    const valSin = document.getElementById('valSin');
+    const valSinExact = document.getElementById('valSinExact');
+    const barSin = document.getElementById('barSin');
+
+    const valCos = document.getElementById('valCos');
+    const valCosExact = document.getElementById('valCosExact');
+    const barCos = document.getElementById('barCos');
+
+    const valTan = document.getElementById('valTan');
+    const valTanExact = document.getElementById('valTanExact');
+    const barTan = document.getElementById('barTan');
+
+    const valCsc = document.getElementById('valCsc');
+    const valSec = document.getElementById('valSec');
+    const valCot = document.getElementById('valCot');
+    const valPythagoras = document.getElementById('valPythagoras');
+
+    // Cajas de cuadrantes para resaltar
+    const qBoxes = {
+      1: document.getElementById('qBox1'),
+      2: document.getElementById('qBox2'),
+      3: document.getElementById('qBox3'),
+      4: document.getElementById('qBox4')
+    };
+
+    // Máximo común divisor para reducción de fracciones
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b) {
+        const t = b;
+        b = a % b;
+        a = t;
+      }
+      return a;
+    }
+
+    // Conversión de grados a fracción irreducible de PI (ESTRICTAMENTE SIN DECIMALES)
+    function degreesToPiFraction(deg) {
+      // Normalizar entre 0 y 360
+      let rounded = Math.round(deg);
+      rounded = ((rounded % 360) + 360) % 360;
+      if (Math.round(deg) === 360) rounded = 360;
+
+      if (rounded === 0) return "0";
+      if (rounded === 180) return "π";
+      if (rounded === 360) return "2π";
+
+      const common = gcd(rounded, 180);
+      const num = rounded / common;
+      const den = 180 / common;
+
+      if (den === 1) {
+        return `${num}π`;
+      } else if (num === 1) {
+        return `π / ${den}`;
+      } else {
+        return `${num}π / ${den}`;
+      }
+    }
+
+    // Tabla de valores trigonométricos exactos para ángulos notables
+    const EXACT_VALUES = {
+      0:   { rad: "0",        sin: "0",        cos: "1",         tan: "0",              labelRad: "0" },
+      30:  { rad: "π / 6",    sin: "1 / 2",    cos: "√3 / 2",    tan: "√3 / 3",         labelRad: "π/6" },
+      45:  { rad: "π / 4",    sin: "√2 / 2",   cos: "√2 / 2",    tan: "1",              labelRad: "π/4" },
+      60:  { rad: "π / 3",    sin: "√3 / 2",   cos: "1 / 2",     tan: "√3",             labelRad: "π/3" },
+      90:  { rad: "π / 2",    sin: "1",        cos: "0",         tan: "±∞ (Indef.)",    labelRad: "π/2" },
+      120: { rad: "2π / 3",   sin: "√3 / 2",   cos: "-1 / 2",    tan: "-√3",            labelRad: "2π/3" },
+      135: { rad: "3π / 4",   sin: "√2 / 2",   cos: "-√2 / 2",   tan: "-1",             labelRad: "3π/4" },
+      150: { rad: "5π / 6",   sin: "1 / 2",    cos: "-√3 / 2",   tan: "-√3 / 3",        labelRad: "5π/6" },
+      180: { rad: "π",        sin: "0",        cos: "-1",        tan: "0",              labelRad: "π" },
+      210: { rad: "7π / 6",   sin: "-1 / 2",   cos: "-√3 / 2",   tan: "√3 / 3",         labelRad: "7π/6" },
+      225: { rad: "5π / 4",   sin: "-√2 / 2",  cos: "-√2 / 2",   tan: "1",              labelRad: "5π/4" },
+      240: { rad: "4π / 3",   sin: "-√3 / 2",  cos: "-1 / 2",    tan: "√3",             labelRad: "4π/3" },
+      270: { rad: "3π / 2",   sin: "-1",       cos: "0",         tan: "±∞ (Indef.)",    labelRad: "3π/2" },
+      300: { rad: "5π / 3",   sin: "-√3 / 2",  cos: "1 / 2",     tan: "-√3",            labelRad: "5π/3" },
+      315: { rad: "7π / 4",   sin: "-√2 / 2",  cos: "√2 / 2",    tan: "-1",             labelRad: "7π/4" },
+      330: { rad: "11π / 6",  sin: "-1 / 2",   cos: "√3 / 2",    tan: "-√3 / 3",        labelRad: "11π/6" },
+      360: { rad: "2π",       sin: "0",        cos: "1",         tan: "0",              labelRad: "2π" }
+    };
+
+    let originX = 0;
+    let originY = 0;
+    let unitRadius = 160;
+
+    function resizeCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+
+      ctx.resetTransform();
+      ctx.scale(dpr, dpr);
+
+      originX = rect.width / 2;
+      originY = rect.height / 2;
+      
+      const minDimension = Math.min(rect.width, rect.height);
+      unitRadius = (minDimension * 0.31) * zoomLevel;
+
+      draw();
+    }
+
+    function toRad(deg) {
+      return (deg * Math.PI) / 180;
+    }
+
+    function formatNumber(val, decimals = 4) {
+      if (Math.abs(val) < 1e-10) return "0.0000";
+      const sign = val > 0 ? "+" : "";
+      return sign + val.toFixed(decimals);
+    }
+
+    function getQuadrant(angle) {
+      const norm = ((angle % 360) + 360) % 360;
+      if (norm === 0 || norm === 360) return { name: "Eje +X", quad: 1 };
+      if (norm === 90) return { name: "Eje +Y", quad: 1 };
+      if (norm === 180) return { name: "Eje -X", quad: 2 };
+      if (norm === 270) return { name: "Eje -Y", quad: 3 };
+
+      if (norm > 0 && norm < 90) return { name: "Cuadrante I", quad: 1 };
+      if (norm > 90 && norm < 180) return { name: "Cuadrante II", quad: 2 };
+      if (norm > 180 && norm < 270) return { name: "Cuadrante III", quad: 3 };
+      return { name: "Cuadrante IV", quad: 4 };
+    }
+
+    // Actualización completa del estado e interfaz de usuario
+    function updateUI() {
+      let angle = (currentAngle % 360 + 360) % 360;
+      if (Math.round(currentAngle) === 360) angle = 360;
+
+      const rad = toRad(angle);
+      const sinVal = Math.sin(rad);
+      const cosVal = Math.cos(rad);
+      const isAsymptoteTanSec = Math.abs(cosVal) < 1e-7;
+      const isAsymptoteCotCsc = Math.abs(sinVal) < 1e-7;
+      const tanVal = isAsymptoteTanSec ? (sinVal > 0 ? Infinity : -Infinity) : Math.tan(rad);
+
+      // Fracción de PI exacta para el ángulo actual
+      const piFraction = degreesToPiFraction(angle);
+
+      // Sincronizar inputs de Grados
+      angleSlider.value = Math.round(angle);
+      angleInput.value = Math.round(angle);
+
+      // Sincronizar slider y badge de Radianes (sin decimales)
+      radSlider.value = Math.round(angle);
+      radDisplayBadge.textContent = piFraction;
+
+      // Cuadrante
+      const qInfo = getQuadrant(angle);
+      quadrantBadge.textContent = qInfo.name;
+
+      // Resaltar cuadrante con colores suaves
+      [1, 2, 3, 4].forEach(q => {
+        if (q === qInfo.quad) {
+          qBoxes[q].classList.add('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-400/30');
+          qBoxes[q].classList.remove('bg-slate-50', 'border-slate-200');
+        } else {
+          qBoxes[q].classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-400/30');
+          qBoxes[q].classList.add('bg-slate-50', 'border-slate-200');
+        }
+      });
+
+      // Valores numéricos en grados y radianes en fracciones de PI
+      valDegrees.textContent = `${Math.round(angle)}°`;
+      valGradients.textContent = `${(angle * 10 / 9).toFixed(2)} grad`;
+      valRadiansExact.textContent = piFraction;
+
+      // Valores exactos si es ángulo notable
+      const roundAngle = Math.round(angle);
+      const isNotable = Math.abs(angle - roundAngle) < 0.15 && EXACT_VALUES[roundAngle];
+      
+      if (isNotable) {
+        valSinExact.textContent = EXACT_VALUES[roundAngle].sin;
+        valCosExact.textContent = EXACT_VALUES[roundAngle].cos;
+        valTanExact.textContent = EXACT_VALUES[roundAngle].tan;
+      } else {
+        valSinExact.textContent = "Decimal aprox.";
+        valCosExact.textContent = "Decimal aprox.";
+        valTanExact.textContent = "Decimal aprox.";
+      }
+
+      // Seno y Coseno
+      valSin.textContent = formatNumber(sinVal);
+      valCos.textContent = formatNumber(cosVal);
+      valCoordinates.textContent = `(${cosVal.toFixed(3)}, ${sinVal.toFixed(3)})`;
+
+      barSin.style.width = `${Math.abs(sinVal) * 100}%`;
+      barCos.style.width = `${Math.abs(cosVal) * 100}%`;
+
+      // Tangente
+      if (isAsymptoteTanSec) {
+        valTan.textContent = "±∞ (Asíntota)";
+        barTan.style.width = "100%";
+      } else {
+        valTan.textContent = formatNumber(tanVal);
+        barTan.style.width = `${Math.min(Math.abs(tanVal) * 50, 100)}%`;
+      }
+
+      // Razones secundarias
+      if (isAsymptoteCotCsc) {
+        valCsc.textContent = "±∞ (Indef.)";
+        valCot.textContent = "±∞ (Indef.)";
+      } else {
+        valCsc.textContent = formatNumber(1 / sinVal, 3);
+        valCot.textContent = formatNumber(cosVal / sinVal, 3);
+      }
+
+      if (isAsymptoteTanSec) {
+        valSec.textContent = "±∞ (Indef.)";
+      } else {
+        valSec.textContent = formatNumber(1 / cosVal, 3);
+      }
+
+      // Identidad pitagórica
+      valPythagoras.textContent = `(${Math.abs(sinVal).toFixed(3)})² + (${Math.abs(cosVal).toFixed(3)})²`;
+
+      draw();
+    }
+
+    // Dibujado en Canvas con precisión vectorial y fondo blanco nítido
+    function draw() {
+      const w = canvas.width / (window.devicePixelRatio || 1);
+      const h = canvas.height / (window.devicePixelRatio || 1);
+
+      // Fondo blanco del lienzo
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, w, h);
+
+      const rad = toRad(currentAngle);
+      const cosVal = Math.cos(rad);
+      const sinVal = Math.sin(rad);
+
+      const px = originX + cosVal * unitRadius;
+      const py = originY - sinVal * unitRadius;
+
+      // 1. Cuadrícula de fondo muy sutil
+      drawGrid(w, h);
+
+      // 2. Ejes Cartesianos nítidos
+      drawAxes(w, h);
+
+      // 3. Circunferencia Goniométrica (R = 1)
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(originX, originY, unitRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = '#94a3b8'; // Borde pizarra medio
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(241, 245, 249, 0.45)'; // Relleno gris perla suave
+      ctx.fill();
+      ctx.restore();
+
+      // 4. Marcas de doble escala en la circunferencia (Grados y Fracciones de PI)
+      drawDualScaleDial();
+
+      // 5. Rectas auxiliares según razones activadas
+      if (showOptions.tan || showOptions.sec) {
+        drawTangentLineX();
+      }
+      if (showOptions.cot || showOptions.csc) {
+        drawCotangentLineY();
+      }
+
+      // 6. Triángulo Rectángulo de referencia sombreado
+      if (showOptions.sin || showOptions.cos) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(px, originY);
+        ctx.lineTo(px, py);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(37, 99, 235, 0.08)';
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 7. Arco del ángulo alfa
+      drawAngleArc(rad);
+
+      // 8. Trazado del Coseno (abscisa X) - Azul Intenso (#2563EB)
+      if (showOptions.cos) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(px, originY);
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(px, originY);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = 'rgba(37, 99, 235, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#1d4ed8';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        const cosLabelX = originX + (cosVal * unitRadius) / 2;
+        const cosLabelY = originY + (sinVal >= 0 ? 18 : -10);
+        ctx.textAlign = 'center';
+        ctx.fillText(`cos = ${cosVal.toFixed(2)}`, cosLabelX, cosLabelY);
+        ctx.restore();
+      }
+
+      // 9. Trazado del Seno (ordenada Y) - Verde Esmeralda (#059669)
+      if (showOptions.sin) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(px, originY);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = '#059669';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(originX, py);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = 'rgba(5, 150, 105, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(originX, py, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#059669';
+        ctx.fill();
+
+        ctx.fillStyle = '#047857';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        const sinLabelX = px + (cosVal >= 0 ? 12 : -12);
+        const sinLabelY = originY - (sinVal * unitRadius) / 2;
+        ctx.textAlign = cosVal >= 0 ? 'left' : 'right';
+        ctx.fillText(`sen = ${sinVal.toFixed(2)}`, sinLabelX, sinLabelY);
+        ctx.restore();
+      }
+
+      // 10. Trazado de la Tangente - Ámbar (#D97706)
+      if (showOptions.tan) {
+        drawTangentSegment(rad, cosVal, sinVal);
+      }
+
+      // 11. Trazado de la Secante - Violeta (#7C3AED)
+      if (showOptions.sec) {
+        drawSecantSegment(rad, cosVal, sinVal);
+      }
+
+      // 12. Trazado de la Cotangente - Cyan/Azul Oscuro (#0891B2)
+      if (showOptions.cot) {
+        drawCotangentSegment(rad, cosVal, sinVal);
+      }
+
+      // 13. Trazado de la Cosecante - Rosa/Frambuesa (#DB2777)
+      if (showOptions.csc) {
+        drawCosecantSegment(rad, cosVal, sinVal);
+      }
+
+      // 14. Radio Vector OP
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(px, py);
+      ctx.strokeStyle = '#1e293b'; // Pizarra muy oscuro
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.restore();
+
+      // 15. Punto P sobre la circunferencia
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(px, py, 7, 0, Math.PI * 2);
+      ctx.fillStyle = '#2563eb';
+      ctx.fill();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(px, py, isDragging ? 15 : 12, 0, Math.PI * 2);
+      ctx.strokeStyle = isDragging ? 'rgba(37, 99, 235, 0.8)' : 'rgba(37, 99, 235, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 12px Inter, sans-serif';
+      const offsetLabelX = cosVal >= 0 ? 14 : -14;
+      const offsetLabelY = sinVal >= 0 ? -14 : 20;
+      ctx.textAlign = cosVal >= 0 ? 'left' : 'right';
+      ctx.fillText('P(cos, sen)', px + offsetLabelX, py + offsetLabelY);
+      ctx.restore();
+
+      // 16. Origen O(0,0)
+      ctx.beginPath();
+      ctx.arc(originX, originY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#475569';
+      ctx.fill();
+    }
+
+    function drawGrid(w, h) {
+      ctx.save();
+      ctx.strokeStyle = '#f1f5f9';
+      ctx.lineWidth = 1;
+      const step = unitRadius / 4;
+
+      for (let x = originX % step; x < w; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = originY % step; y < h; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawAxes(w, h) {
+      ctx.save();
+      ctx.strokeStyle = '#334155'; // Gris pizarra oscuro para excelente contraste
+      ctx.lineWidth = 1.5;
+
+      // Eje X
+      ctx.beginPath();
+      ctx.moveTo(20, originY);
+      ctx.lineTo(w - 20, originY);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(w - 20, originY);
+      ctx.lineTo(w - 28, originY - 5);
+      ctx.lineTo(w - 28, originY + 5);
+      ctx.closePath();
+      ctx.fillStyle = '#334155';
+      ctx.fill();
+
+      // Eje Y
+      ctx.beginPath();
+      ctx.moveTo(originX, h - 20);
+      ctx.lineTo(originX, 20);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(originX, 20);
+      ctx.lineTo(originX - 5, 28);
+      ctx.lineTo(originX + 5, 28);
+      ctx.closePath();
+      ctx.fillStyle = '#334155';
+      ctx.fill();
+
+      // Marcas +1, -1
+      ctx.fillStyle = '#475569';
+      ctx.font = '600 11px Fira Code, monospace';
+      ctx.textAlign = 'center';
+      
+      ctx.fillText('+1', originX + unitRadius, originY + 16);
+      ctx.beginPath();
+      ctx.moveTo(originX + unitRadius, originY - 4);
+      ctx.lineTo(originX + unitRadius, originY + 4);
+      ctx.stroke();
+
+      ctx.fillText('-1', originX - unitRadius, originY + 16);
+      ctx.beginPath();
+      ctx.moveTo(originX - unitRadius, originY - 4);
+      ctx.lineTo(originX - unitRadius, originY + 4);
+      ctx.stroke();
+
+      ctx.textAlign = 'right';
+      ctx.fillText('+1', originX - 10, originY - unitRadius + 4);
+      ctx.beginPath();
+      ctx.moveTo(originX - 4, originY - unitRadius);
+      ctx.lineTo(originX + 4, originY - unitRadius);
+      ctx.stroke();
+
+      ctx.fillText('-1', originX - 10, originY + unitRadius + 4);
+      ctx.beginPath();
+      ctx.moveTo(originX - 4, originY + unitRadius);
+      ctx.lineTo(originX + 4, originY + unitRadius);
+      ctx.stroke();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 13px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('X', w - 10, originY - 10);
+      ctx.textAlign = 'left';
+      ctx.fillText('Y', originX + 12, 25);
+
+      ctx.restore();
+    }
+
+    // Doble escala radial alrededor de la circunferencia: Grados (interior) y Fracciones de PI (exterior)
+    function drawDualScaleDial() {
+      ctx.save();
+      
+      for (let a = 0; a < 360; a += 15) {
+        const radA = toRad(a);
+        const cosA = Math.cos(radA);
+        const sinA = Math.sin(radA);
+        const isMajor = a % 90 === 0;
+        const isMedium = a % 30 === 0;
+        const isExactNotable = EXACT_VALUES[a] !== undefined;
+
+        // Ticks
+        const tickIn = isMajor ? 8 : (isMedium ? 5 : 3);
+        const tickOut = isExactNotable ? 7 : (isMedium ? 4 : 2);
+
+        const x1 = originX + cosA * (unitRadius - tickIn);
+        const y1 = originY - sinA * (unitRadius - tickIn);
+        const x2 = originX + cosA * (unitRadius + tickOut);
+        const y2 = originY - sinA * (unitRadius + tickOut);
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = isMajor ? '#334155' : (isMedium ? '#64748b' : '#cbd5e1');
+        ctx.lineWidth = isMajor ? 2 : (isMedium ? 1.5 : 1);
+        ctx.stroke();
+
+        // Etiquetas de ángulos notables: Grados sexagesimales y Fracciones de PI
+        if (isExactNotable) {
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+
+          const rDeg = unitRadius - (isMajor ? 20 : 16);
+          const rRad = unitRadius + (isMajor ? 22 : 18);
+
+          // Grados sexagesimales (lado interior)
+          ctx.font = isMajor ? 'bold 11px Inter, sans-serif' : '500 10px Inter, sans-serif';
+          ctx.fillStyle = isMajor ? '#0f172a' : '#475569';
+          ctx.fillText(`${a}°`, originX + cosA * rDeg, originY - sinA * rDeg);
+
+          // Radianes en FRACCIONES DE PI (lado exterior)
+          ctx.font = isMajor ? 'bold 11px Fira Code, monospace' : '600 10px Fira Code, monospace';
+          ctx.fillStyle = isMajor ? '#6b21a8' : '#7e22ce'; // Púrpura nítido
+          ctx.fillText(EXACT_VALUES[a].labelRad, originX + cosA * rRad, originY - sinA * rRad);
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawAngleArc(rad) {
+      const arcRadius = Math.min(unitRadius * 0.28, 44);
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(originX, originY);
+      ctx.arc(originX, originY, arcRadius, 0, -rad, true);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.2)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(originX, originY, arcRadius, 0, -rad, true);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      const midRad = rad / 2;
+      const textDist = arcRadius + 14;
+      const ax = originX + Math.cos(midRad) * textDist;
+      const ay = originY - Math.sin(midRad) * textDist;
+      ctx.fillStyle = '#b45309';
+      ctx.font = 'bold 13px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('α', ax, ay);
+      ctx.restore();
+    }
+
+    // Recta tangente auxiliar vertical en x = 1 (para tangente y secante)
+    function drawTangentLineX() {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(217, 119, 6, 0.4)';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(originX + unitRadius, 0);
+      ctx.lineTo(originX + unitRadius, canvas.height);
+      ctx.stroke();
+
+      // Etiqueta x = 1
+      ctx.fillStyle = '#b45309';
+      ctx.font = 'bold 10px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('x = 1 (recta tan)', originX + unitRadius + 4, 18);
+      ctx.restore();
+    }
+
+    // Recta cotangente auxiliar horizontal en y = 1 (para cotangente y cosecante)
+    function drawCotangentLineY() {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(8, 145, 178, 0.4)';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(0, originY - unitRadius);
+      ctx.lineTo(canvas.width, originY - unitRadius);
+      ctx.stroke();
+
+      // Etiqueta y = 1
+      ctx.fillStyle = '#0e7490';
+      ctx.font = 'bold 10px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('y = 1 (recta cot)', 15, originY - unitRadius - 6);
+      ctx.restore();
+    }
+
+    // Segmento de Tangente - Ámbar (#D97706)
+    function drawTangentSegment(rad, cosVal, sinVal) {
+      if (Math.abs(cosVal) < 1e-4) {
+        drawAsymptoteWarning('Tangente no definida en cos(α) = 0 (±∞)');
+        return;
+      }
+      const tanVal = Math.tan(rad);
+      const tanX = originX + unitRadius;
+      const tanY = originY - tanVal * unitRadius;
+
+      ctx.save();
+      // Prolongación radial
+      ctx.beginPath();
+      ctx.setLineDash([3, 3]);
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(tanX, tanY);
+      ctx.strokeStyle = 'rgba(217, 119, 6, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Segmento tangente
+      ctx.beginPath();
+      ctx.setLineDash([]);
+      ctx.moveTo(tanX, originY);
+      ctx.lineTo(tanX, tanY);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(tanX, tanY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#d97706';
+      ctx.fill();
+
+      if (tanY >= 15 && tanY <= canvas.height - 15) {
+        ctx.fillStyle = '#b45309';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`tan = ${tanVal.toFixed(2)}`, tanX + 8, originY - (tanVal * unitRadius) / 2);
+      }
+      ctx.restore();
+    }
+
+    // Segmento de Secante - Violeta (#7C3AED)
+    function drawSecantSegment(rad, cosVal, sinVal) {
+      if (Math.abs(cosVal) < 1e-4) return;
+      const tanVal = Math.tan(rad);
+      const secVal = 1 / cosVal;
+      const tanX = originX + unitRadius;
+      const tanY = originY - tanVal * unitRadius;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(tanX, tanY);
+      ctx.strokeStyle = '#7c3aed';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#6d28d9';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      const midX = (originX + tanX) / 2;
+      const midY = (originY + tanY) / 2;
+      ctx.fillText(`sec = ${secVal.toFixed(2)}`, midX - 25, midY - 6);
+      ctx.restore();
+    }
+
+    // Segmento de Cotangente sobre y = 1 - Cyan (#0891B2)
+    function drawCotangentSegment(rad, cosVal, sinVal) {
+      if (Math.abs(sinVal) < 1e-4) {
+        drawAsymptoteWarning('Cotangente no definida en sen(α) = 0 (±∞)');
+        return;
+      }
+      const cotVal = cosVal / sinVal;
+      const cotX = originX + cotVal * unitRadius;
+      const cotY = originY - unitRadius;
+
+      ctx.save();
+      // Prolongación radial
+      ctx.beginPath();
+      ctx.setLineDash([3, 3]);
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(cotX, cotY);
+      ctx.strokeStyle = 'rgba(8, 145, 178, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Segmento cotangente
+      ctx.beginPath();
+      ctx.setLineDash([]);
+      ctx.moveTo(originX, cotY);
+      ctx.lineTo(cotX, cotY);
+      ctx.strokeStyle = '#0891b2';
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(cotX, cotY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#0891b2';
+      ctx.fill();
+
+      if (cotX >= 15 && cotX <= canvas.width - 15) {
+        ctx.fillStyle = '#0e7490';
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`cot = ${cotVal.toFixed(2)}`, originX + (cotVal * unitRadius) / 2, cotY - 8);
+      }
+      ctx.restore();
+    }
+
+    // Segmento de Cosecante - Rosa Frambuesa (#DB2777)
+    function drawCosecantSegment(rad, cosVal, sinVal) {
+      if (Math.abs(sinVal) < 1e-4) return;
+      const cotVal = cosVal / sinVal;
+      const cscVal = 1 / sinVal;
+      const cotX = originX + cotVal * unitRadius;
+      const cotY = originY - unitRadius;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(originX, originY);
+      ctx.lineTo(cotX, cotY);
+      ctx.strokeStyle = '#db2777';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#be185d';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      const midX = (originX + cotX) / 2;
+      const midY = (originY + cotY) / 2;
+      ctx.fillText(`csc = ${cscVal.toFixed(2)}`, midX + 8, midY - 6);
+      ctx.restore();
+    }
+
+    function drawAsymptoteWarning(msg) {
+      ctx.save();
+      ctx.fillStyle = '#e11d48';
+      ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`⚠️ ${msg}`, originX, originY - unitRadius - 32);
+      ctx.restore();
+    }
+
+    // Interacción por arrastre del mouse / touch
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function calculateAngleFromCoords(x, y) {
+      const dx = x - originX;
+      const dy = -(y - originY);
+      let angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+      if (angle < 0) angle += 360;
+      return Math.round(angle);
+    }
+
+    function isNearPointP(x, y) {
+      const rad = toRad(currentAngle);
+      const px = originX + Math.cos(rad) * unitRadius;
+      const py = originY - Math.sin(rad) * unitRadius;
+      return Math.hypot(x - px, y - py) <= 24;
+    }
+
+    function onPointerDown(e) {
+      const coords = getCanvasCoordinates(e);
+      const distToCenter = Math.hypot(coords.x - originX, coords.y - originY);
+      if (isNearPointP(coords.x, coords.y) || Math.abs(distToCenter - unitRadius) < 32) {
+        isDragging = true;
+        if (isPlaying) togglePlay();
+        currentAngle = calculateAngleFromCoords(coords.x, coords.y);
+        updateUI();
+      }
+    }
+
+    function onPointerMove(e) {
+      const coords = getCanvasCoordinates(e);
+      if (isDragging) {
+        currentAngle = calculateAngleFromCoords(coords.x, coords.y);
+        updateUI();
+      } else {
+        canvas.style.cursor = isNearPointP(coords.x, coords.y) ? 'grab' : 'crosshair';
+      }
+    }
+
+    function onPointerUp() {
+      if (isDragging) {
+        isDragging = false;
+        canvas.style.cursor = 'crosshair';
+      }
+    }
+
+    canvas.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+
+    canvas.addEventListener('touchstart', (e) => {
+      onPointerDown(e);
+      e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+      if (isDragging) {
+        onPointerMove(e);
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', onPointerUp);
+
+    // Animación continua
+    function loopAnimation() {
+      currentAngle = (currentAngle + 1) % 360;
+      updateUI();
+      animFrameId = requestAnimationFrame(loopAnimation);
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        playText.textContent = "Pausar";
+        playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        btnPlayPause.classList.replace('bg-blue-600', 'bg-amber-600');
+        btnPlayPause.classList.replace('hover:bg-blue-700', 'hover:bg-amber-700');
+        animFrameId = requestAnimationFrame(loopAnimation);
+      } else {
+        playText.textContent = "Animar";
+        playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        btnPlayPause.classList.replace('bg-amber-600', 'bg-blue-600');
+        btnPlayPause.classList.replace('hover:bg-amber-700', 'hover:bg-blue-700');
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+      }
+    }
+
+    // Sincronización de Grados
+    angleSlider.addEventListener('input', (e) => {
+      if (isPlaying) togglePlay();
+      currentAngle = parseFloat(e.target.value);
+      updateUI();
+    });
+
+    angleInput.addEventListener('change', (e) => {
+      if (isPlaying) togglePlay();
+      let val = parseFloat(e.target.value);
+      if (isNaN(val)) val = 0;
+      currentAngle = ((Math.round(val) % 360) + 360) % 360;
+      updateUI();
+    });
+
+    // Sincronización del deslizador de Radianes (ajustado por pasos exactos de fracciones de PI)
+    radSlider.addEventListener('input', (e) => {
+      if (isPlaying) togglePlay();
+      currentAngle = parseFloat(e.target.value);
+      updateUI();
+    });
+
+    btnPlayPause.addEventListener('click', togglePlay);
+
+    btnReset.addEventListener('click', () => {
+      if (isPlaying) togglePlay();
+      currentAngle = 0;
+      updateUI();
+    });
+
+    btnStepMinus.addEventListener('click', () => {
+      if (isPlaying) togglePlay();
+      currentAngle = (Math.round(currentAngle) - 1 + 360) % 360;
+      updateUI();
+    });
+
+    btnStepPlus.addEventListener('click', () => {
+      if (isPlaying) togglePlay();
+      currentAngle = (Math.round(currentAngle) + 1) % 360;
+      updateUI();
+    });
+
+    // Botones de ángulos notables
+    document.querySelectorAll('.notable-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (isPlaying) togglePlay();
+        currentAngle = parseFloat(btn.getAttribute('data-angle'));
+        updateUI();
+      });
+    });
+
+    // Sincronización de checkboxes individuales
+    function syncCheckboxes() {
+      chkSin.checked = showOptions.sin;
+      chkCos.checked = showOptions.cos;
+      chkTan.checked = showOptions.tan;
+      chkCot.checked = showOptions.cot;
+      chkSec.checked = showOptions.sec;
+      chkCsc.checked = showOptions.csc;
+      draw();
+    }
+
+    chkSin.addEventListener('change', (e) => { showOptions.sin = e.target.checked; draw(); });
+    chkCos.addEventListener('change', (e) => { showOptions.cos = e.target.checked; draw(); });
+    chkTan.addEventListener('change', (e) => { showOptions.tan = e.target.checked; draw(); });
+    chkCot.addEventListener('change', (e) => { showOptions.cot = e.target.checked; draw(); });
+    chkSec.addEventListener('change', (e) => { showOptions.sec = e.target.checked; draw(); });
+    chkCsc.addEventListener('change', (e) => { showOptions.csc = e.target.checked; draw(); });
+
+    // Botones de aislamiento rápido
+    btnOnlySin.addEventListener('click', () => {
+      Object.keys(showOptions).forEach(k => showOptions[k] = false);
+      showOptions.sin = true;
+      syncCheckboxes();
+    });
+
+    btnOnlyCos.addEventListener('click', () => {
+      Object.keys(showOptions).forEach(k => showOptions[k] = false);
+      showOptions.cos = true;
+      syncCheckboxes();
+    });
+
+    btnOnlyTan.addEventListener('click', () => {
+      Object.keys(showOptions).forEach(k => showOptions[k] = false);
+      showOptions.tan = true;
+      syncCheckboxes();
+    });
+
+    btnPresetBasic.addEventListener('click', () => {
+      showOptions.sin = true;
+      showOptions.cos = true;
+      showOptions.tan = true;
+      showOptions.cot = false;
+      showOptions.sec = false;
+      showOptions.csc = false;
+      syncCheckboxes();
+    });
+
+    btnPresetAll.addEventListener('click', () => {
+      Object.keys(showOptions).forEach(k => showOptions[k] = true);
+      syncCheckboxes();
+    });
+
+    btnPresetNone.addEventListener('click', () => {
+      Object.keys(showOptions).forEach(k => showOptions[k] = false);
+      syncCheckboxes();
+    });
+
+    // Zoom
+    btnZoomIn.addEventListener('click', () => {
+      zoomLevel = Math.min(zoomLevel + 0.15, 1.6);
+      resizeCanvas();
+    });
+    btnZoomOut.addEventListener('click', () => {
+      zoomLevel = Math.max(zoomLevel - 0.15, 0.7);
+      resizeCanvas();
+    });
+    btnZoomReset.addEventListener('click', () => {
+      zoomLevel = 1.0;
+      resizeCanvas();
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    window.onload = function() {
+      resizeCanvas();
+      updateUI();
+    };
+  </script>
+</body>
+</html>
