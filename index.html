@@ -6,20 +6,20 @@
   <title>Circunferencia Goniométrica Interactiva</title>
   <style>
     :root {
-      --bg-body: #ffffff;
-      --card-bg: #f8fafc;
-      --border-color: #cbd5e1;
-      --text-main: #0f172a;
-      --text-muted: #475569;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
+      --bg-body: #000000;
+      --card-bg: #0b0f19;
+      --panel-bg: #141c2e;
+      --border-color: #27354f;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
       
-      --c-sin: #059669;
-      --c-cos: #2563eb;
-      --c-tan: #d97706;
-      --c-cot: #0891b2;
-      --c-sec: #7c3aed;
-      --c-csc: #db2777;
+      --c-sin: #10b981;
+      --c-cos: #3b82f6;
+      --c-tan: #f59e0b;
+      --c-cot: #06b6d4;
+      --c-sec: #a855f7;
+      --c-csc: #ec4899;
     }
 
     * {
@@ -32,60 +32,63 @@
     body {
       background-color: var(--bg-body);
       color: var(--text-main);
-      padding: 16px;
+      padding: 10px 16px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       width: 100%;
-      max-width: 1100px;
+      max-width: 1220px;
     }
 
     h1 {
-      font-size: 1.8rem;
+      font-size: 1.45rem;
       font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+      color: #38bdf8;
     }
 
     .main-container {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 14px;
       width: 100%;
-      max-width: 1100px;
+      max-width: 1220px;
     }
 
-    @media (min-width: 900px) {
+    @media (min-width: 980px) {
       .main-container {
-        grid-template-columns: 540px 1fr;
-        align-items: start;
+        grid-template-columns: 570px 1fr;
+        align-items: stretch;
       }
     }
 
     .canvas-card {
-      background: #ffffff;
+      background: #000000;
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      padding: 10px;
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.9);
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
 
     canvas {
       width: 100%;
-      max-width: 500px;
+      max-width: 540px;
       aspect-ratio: 1 / 1;
       touch-action: none;
       cursor: grab;
       border-radius: 8px;
+      background: #000000;
     }
 
     canvas:active {
@@ -95,224 +98,226 @@
     .controls-card {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 10px;
+      justify-content: space-between;
     }
 
     .panel {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 11px 13px;
     }
 
     .panel-title {
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 12px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      letter-spacing: 0.3px;
     }
 
     .slider-group {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .slider-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .slider-row label {
-      width: 80px;
+      width: 82px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.84rem;
+      color: var(--text-muted);
     }
 
     input[type="range"] {
       flex: 1;
       accent-color: var(--primary);
       cursor: pointer;
+      background: #1e293b;
     }
 
     .val-badge {
-      min-width: 75px;
+      min-width: 76px;
       text-align: right;
       font-family: monospace;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      background: #e2e8f0;
-      padding: 4px 8px;
+      background: #1e293b;
+      padding: 3px 8px;
       border-radius: 6px;
-      color: #0f172a;
-    }
-
-    .preset-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
-    }
-
-    button.btn-chip {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      font-weight: 600;
-      color: var(--text-main);
-      transition: all 0.15s ease;
-    }
-
-    button.btn-chip:hover {
-      background: #e2e8f0;
-      border-color: #94a3b8;
-    }
-
-    .actions-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .btn-action {
-      flex: 1;
-      padding: 8px 12px;
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-action:hover {
-      background: #f1f5f9;
+      color: #38bdf8;
+      border: 1px solid #334155;
     }
 
     .ratios-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 6px;
     }
 
     .ratio-toggle {
       display: flex;
       align-items: center;
-      padding: 8px 10px;
-      border-radius: 8px;
+      padding: 6px 9px;
+      border-radius: 6px;
       border: 1px solid var(--border-color);
-      background: #ffffff;
+      background: var(--panel-bg);
       cursor: pointer;
       user-select: none;
-      transition: background 0.15s ease;
+      transition: background 0.15s ease, border-color 0.15s ease;
     }
 
     .ratio-toggle:hover {
-      background: #f8fafc;
+      background: #1b263e;
+      border-color: #475569;
     }
 
     .ratio-toggle input {
-      margin-right: 8px;
+      margin-right: 7px;
       accent-color: var(--primary);
     }
 
     .ratio-indicator {
-      width: 12px;
-      height: 12px;
-      border-radius: 3px;
-      margin-right: 8px;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      margin-right: 7px;
       display: inline-block;
+      box-shadow: 0 0 6px currentColor;
     }
 
     .ratio-name {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       flex: 1;
+      color: #f1f5f9;
     }
 
     .ratio-val {
       font-family: monospace;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 700;
+      color: #e2e8f0;
     }
 
     .preset-filter-row {
       display: flex;
       flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 8px;
+    }
+
+    .preset-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    button.btn-chip {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      padding: 3px 7px;
+      font-size: 0.76rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: #e2e8f0;
+      transition: all 0.15s ease;
+    }
+
+    button.btn-chip:hover {
+      background: #2563eb;
+      border-color: #60a5fa;
+      color: #ffffff;
+    }
+
+    .actions-row {
+      display: flex;
       gap: 6px;
-      margin-top: 10px;
+      margin-top: 8px;
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 6px 10px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .btn-action:hover {
+      background: #1e293b;
+      border-color: #64748b;
     }
 
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 6px;
       text-align: center;
     }
 
     .metric-box {
-      background: #ffffff;
+      background: var(--panel-bg);
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 8px;
+      padding: 6px;
     }
 
     .metric-title {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
       margin-bottom: 2px;
       text-transform: uppercase;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 0.4px;
     }
 
     .metric-value {
-      font-size: 1rem;
+      font-size: 0.96rem;
       font-weight: 700;
       font-family: monospace;
     }
 
-    /* Footer Institucional y Licencia */
     footer {
       width: 100%;
-      max-width: 1100px;
-      margin-top: 32px;
-      padding-top: 20px;
+      max-width: 1220px;
+      margin-top: 12px;
+      padding-top: 8px;
       border-top: 1px solid var(--border-color);
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.85rem;
-      line-height: 1.6;
+      font-size: 0.78rem;
+      line-height: 1.4;
     }
 
     .footer-author {
       font-weight: 700;
-      color: var(--text-main);
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-    }
-
-    .footer-license {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      color: #e2e8f0;
+      margin-bottom: 3px;
     }
 
     .footer-license a {
-      color: var(--primary);
+      color: #38bdf8;
       text-decoration: none;
       font-weight: 600;
     }
@@ -329,38 +334,103 @@
   </header>
 
   <div class="main-container">
-    <!-- Canvas de dibujo -->
     <div class="canvas-card">
       <canvas id="trigCanvas" width="600" height="600"></canvas>
     </div>
 
-    <!-- Panel de control interactivo -->
     <div class="controls-card">
       
-      <!-- Control de Ángulo -->
+      <!-- 1. Deslizadores de Selección de Ángulo -->
       <div class="panel">
         <div class="panel-title">
           <span>Selección de Ángulo</span>
-          <span id="quadrantTag" style="font-size: 0.8rem; background: #e2e8f0; padding: 2px 8px; border-radius: 4px;">Cuadrante I</span>
+          <span id="quadrantTag" style="font-size: 0.75rem; background: #1e293b; color: #38bdf8; padding: 2px 7px; border-radius: 4px; border: 1px solid #334155;">Cuadrante I</span>
         </div>
 
         <div class="slider-group">
-          <!-- Grados Sexagesimales -->
           <div class="slider-row">
             <label for="sliderDeg">Grados (°):</label>
             <input type="range" id="sliderDeg" min="0" max="360" step="1" value="45">
             <span class="val-badge" id="dispDeg">45°</span>
           </div>
 
-          <!-- Radianes en fracciones de Pi -->
           <div class="slider-row">
             <label for="sliderRad">Radianes:</label>
             <input type="range" id="sliderRad" min="0" max="360" step="1" value="45">
             <span class="val-badge" id="dispRad">π/4</span>
           </div>
         </div>
+      </div>
 
-        <!-- Presets notables -->
+      <!-- 2. Selección de las Razones (INMEDIATAMENTE DEBAJO DE LOS DESLIZADORES) -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>Razones Trigonométricas Representadas</span>
+        </div>
+
+        <div class="ratios-grid">
+          <label class="ratio-toggle">
+            <input type="checkbox" id="chkSin" checked onchange="render()">
+            <span class="ratio-indicator" style="background: var(--c-sin); color: var(--c-sin);"></span>
+            <span class="ratio-name">Seno</span>
+            <span class="ratio-val" id="valSin">0.707</span>
+          </label>
+
+          <label class="ratio-toggle">
+            <input type="checkbox" id="chkCos" checked onchange="render()">
+            <span class="ratio-indicator" style="background: var(--c-cos); color: var(--c-cos);"></span>
+            <span class="ratio-name">Coseno</span>
+            <span class="ratio-val" id="valCos">0.707</span>
+          </label>
+
+          <label class="ratio-toggle">
+            <input type="checkbox" id="chkTan" checked onchange="render()">
+            <span class="ratio-indicator" style="background: var(--c-tan); color: var(--c-tan);"></span>
+            <span class="ratio-name">Tangente</span>
+            <span class="ratio-val" id="valTan">1.000</span>
+          </label>
+
+          <label class="ratio-toggle">
+            <input type="checkbox" id="chkCot" checked onchange="render()">
+            <span class="ratio-indicator" style="background: var(--c-cot); color: var(--c-cot);"></span>
+            <span class="ratio-name">Cotangente</span>
+            <span class="ratio-val" id="valCot">1.000</span>
+          </label>
+
+          <label class="ratio-toggle">
+            <input type="checkbox" id="chkSec" checked onchange="render()">
+            <span class="ratio-indicator" style="background: var(--c-sec); color: var(--c-sec);"></span>
+            <span class="ratio-name">Secante</span>
+            <span class="ratio-val" id="valSec">1.414</span>
+          </label>
+
+          <label class="ratio-toggle">
+            <input type="checkbox" id="chkCsc" checked onchange="render()">
+            <span class="ratio-indicator" style="background: var(--c-csc); color: var(--c-csc);"></span>
+            <span class="ratio-name">Cosecante</span>
+            <span class="ratio-val" id="valCsc">1.414</span>
+          </label>
+        </div>
+
+        <div class="preset-filter-row">
+          <button class="btn-chip" onclick="isolateRatio('sin')">Solo Sen</button>
+          <button class="btn-chip" onclick="isolateRatio('cos')">Solo Cos</button>
+          <button class="btn-chip" onclick="isolateRatio('tan')">Solo Tan</button>
+          <button class="btn-chip" onclick="isolateRatio('cot')">Solo Cot</button>
+          <button class="btn-chip" onclick="isolateRatio('sec')">Solo Sec</button>
+          <button class="btn-chip" onclick="isolateRatio('csc')">Solo Csc</button>
+          <button class="btn-chip" onclick="setRatioGroup('basic')">Básicas (3)</button>
+          <button class="btn-chip" onclick="setRatioGroup('all')">Todas (6)</button>
+          <button class="btn-chip" onclick="setRatioGroup('none')">Limpiar</button>
+        </div>
+      </div>
+
+      <!-- 3. Ángulos Notables y Acciones de Giro -->
+      <div class="panel">
+        <div class="panel-title">
+          <span>Ángulos Notables y Animación</span>
+        </div>
+
         <div class="preset-buttons">
           <button class="btn-chip" onclick="setAngle(0)">0° (0)</button>
           <button class="btn-chip" onclick="setAngle(30)">30° (π/6)</button>
@@ -369,8 +439,15 @@
           <button class="btn-chip" onclick="setAngle(90)">90° (π/2)</button>
           <button class="btn-chip" onclick="setAngle(120)">120° (2π/3)</button>
           <button class="btn-chip" onclick="setAngle(135)">135° (3π/4)</button>
+          <button class="btn-chip" onclick="setAngle(150)">150° (5π/6)</button>
           <button class="btn-chip" onclick="setAngle(180)">180° (π)</button>
+          <button class="btn-chip" onclick="setAngle(210)">210° (7π/6)</button>
+          <button class="btn-chip" onclick="setAngle(225)">225° (5π/4)</button>
+          <button class="btn-chip" onclick="setAngle(240)">240° (4π/3)</button>
           <button class="btn-chip" onclick="setAngle(270)">270° (3π/2)</button>
+          <button class="btn-chip" onclick="setAngle(300)">300° (5π/3)</button>
+          <button class="btn-chip" onclick="setAngle(315)">315° (7π/4)</button>
+          <button class="btn-chip" onclick="setAngle(330)">330° (11π/6)</button>
           <button class="btn-chip" onclick="setAngle(360)">360° (2π)</button>
         </div>
 
@@ -383,80 +460,20 @@
         </div>
       </div>
 
-      <!-- Selector de Razones Trigonométricas -->
-      <div class="panel">
-        <div class="panel-title">
-          <span>Razones Trigonométricas Representadas</span>
-        </div>
-
-        <div class="ratios-grid">
-          <label class="ratio-toggle">
-            <input type="checkbox" id="chkSin" checked onchange="render()">
-            <span class="ratio-indicator" style="background: var(--c-sin);"></span>
-            <span class="ratio-name">Seno</span>
-            <span class="ratio-val" id="valSin">0.707</span>
-          </label>
-
-          <label class="ratio-toggle">
-            <input type="checkbox" id="chkCos" checked onchange="render()">
-            <span class="ratio-indicator" style="background: var(--c-cos);"></span>
-            <span class="ratio-name">Coseno</span>
-            <span class="ratio-val" id="valCos">0.707</span>
-          </label>
-
-          <label class="ratio-toggle">
-            <input type="checkbox" id="chkTan" checked onchange="render()">
-            <span class="ratio-indicator" style="background: var(--c-tan);"></span>
-            <span class="ratio-name">Tangente</span>
-            <span class="ratio-val" id="valTan">1.000</span>
-          </label>
-
-          <label class="ratio-toggle">
-            <input type="checkbox" id="chkCot" onchange="render()">
-            <span class="ratio-indicator" style="background: var(--c-cot);"></span>
-            <span class="ratio-name">Cotangente</span>
-            <span class="ratio-val" id="valCot">1.000</span>
-          </label>
-
-          <label class="ratio-toggle">
-            <input type="checkbox" id="chkSec" onchange="render()">
-            <span class="ratio-indicator" style="background: var(--c-sec);"></span>
-            <span class="ratio-name">Secante</span>
-            <span class="ratio-val" id="valSec">1.414</span>
-          </label>
-
-          <label class="ratio-toggle">
-            <input type="checkbox" id="chkCsc" onchange="render()">
-            <span class="ratio-indicator" style="background: var(--c-csc);"></span>
-            <span class="ratio-name">Cosecante</span>
-            <span class="ratio-val" id="valCsc">1.414</span>
-          </label>
-        </div>
-
-        <div class="preset-filter-row">
-          <button class="btn-chip" onclick="isolateRatio('sin')">Solo Sen</button>
-          <button class="btn-chip" onclick="isolateRatio('cos')">Solo Cos</button>
-          <button class="btn-chip" onclick="isolateRatio('tan')">Solo Tan</button>
-          <button class="btn-chip" onclick="setRatioGroup('basic')">Básicas (3)</button>
-          <button class="btn-chip" onclick="setRatioGroup('all')">Todas (6)</button>
-          <button class="btn-chip" onclick="setRatioGroup('none')">Limpiar</button>
-        </div>
-      </div>
-
-      <!-- Identidad y Coordenadas -->
+      <!-- 4. Coordenadas e Identidad -->
       <div class="panel">
         <div class="metrics-grid">
           <div class="metric-box">
-            <div class="metric-title">Coordenada X</div>
-            <div class="metric-value" id="coordX" style="color: var(--c-cos);">0.707</div>
+            <div class="metric-title">Coordenada X (cos)</div>
+            <div class="metric-value" id="coordX" style="color: #60a5fa;">0.707</div>
           </div>
           <div class="metric-box">
-            <div class="metric-title">Coordenada Y</div>
-            <div class="metric-value" id="coordY" style="color: var(--c-sin);">0.707</div>
+            <div class="metric-title">Coordenada Y (sen)</div>
+            <div class="metric-value" id="coordY" style="color: #34d399;">0.707</div>
           </div>
           <div class="metric-box">
             <div class="metric-title">sen² + cos²</div>
-            <div class="metric-value" style="color: #0f172a;">1.000</div>
+            <div class="metric-value" style="color: #f8fafc;">1.000</div>
           </div>
         </div>
       </div>
@@ -464,13 +481,12 @@
     </div>
   </div>
 
-  <!-- Pie de página institucional y licencia -->
   <footer>
     <div class="footer-author">
       Autor: Juanjo Castro, Dpto. Matemáticas CEIPS Santo Domingo (Algete)
     </div>
     <div class="footer-license">
-      <span>Obra bajo licencia</span>
+      <span>Obra bajo licencia </span>
       <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="license noopener noreferrer">
         Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)
       </a>
@@ -478,7 +494,6 @@
   </footer>
 
   <script>
-    // Variables globales
     let angleDeg = 45;
     let isPlaying = false;
     let animId = null;
@@ -487,7 +502,6 @@
     const canvas = document.getElementById('trigCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Elementos DOM
     const sliderDeg = document.getElementById('sliderDeg');
     const sliderRad = document.getElementById('sliderRad');
     const dispDeg = document.getElementById('dispDeg');
@@ -511,7 +525,6 @@
     const coordX = document.getElementById('coordX');
     const coordY = document.getElementById('coordY');
 
-    // Máximo Común Divisor para simplificar fracciones de pi
     function gcd(a, b) {
       a = Math.abs(a);
       b = Math.abs(b);
@@ -523,7 +536,6 @@
       return a;
     }
 
-    // Convierte un ángulo en grados a fracción exacta irreductible de Pi
     function degToPiFraction(deg) {
       deg = ((Math.round(deg) % 360) + 360) % 360;
       if (deg === 0) return "0";
@@ -538,7 +550,6 @@
       return `${numStr}/${den}`;
     }
 
-    // Sincronización de eventos de sliders
     sliderDeg.addEventListener('input', (e) => {
       setAngle(parseFloat(e.target.value));
     });
@@ -577,7 +588,6 @@
       animId = requestAnimationFrame(animate);
     }
 
-    // Aislamiento y filtros de razones
     function isolateRatio(ratio) {
       chkSin.checked = (ratio === 'sin');
       chkCos.checked = (ratio === 'cos');
@@ -600,13 +610,11 @@
       render();
     }
 
-    // Actualiza textos numéricos en la interfaz
     function updateValuesUI() {
       const rad = (angleDeg * Math.PI) / 180;
       dispDeg.textContent = `${Math.round(angleDeg)}°`;
       dispRad.textContent = degToPiFraction(angleDeg);
 
-      // Cuadrante
       let q = "Eje";
       if (angleDeg > 0 && angleDeg < 90) q = "Cuadrante I";
       else if (angleDeg > 90 && angleDeg < 180) q = "Cuadrante II";
@@ -622,7 +630,6 @@
       coordX.textContent = c.toFixed(3);
       coordY.textContent = s.toFixed(3);
 
-      // Tangente y Secante (asíntotas en 90° y 270°)
       if (Math.abs(c) < 1e-4) {
         valTan.textContent = "±∞";
         valSec.textContent = "±∞";
@@ -631,7 +638,6 @@
         valSec.textContent = (1 / c).toFixed(3);
       }
 
-      // Cotangente y Cosecante (asíntotas en 0° y 180°)
       if (Math.abs(s) < 1e-4) {
         valCot.textContent = "±∞";
         valCsc.textContent = "±∞";
@@ -641,7 +647,6 @@
       }
     }
 
-    // Interacción táctil y ratón sobre el canvas
     function getCanvasAngle(evt) {
       const rect = canvas.getBoundingClientRect();
       const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
@@ -690,22 +695,31 @@
       isDragging = false;
     });
 
-    // Renderizado del Canvas
+    function drawAxisMarker(x, y, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
     function render() {
       const w = canvas.width;
       const h = canvas.height;
       const cx = w / 2;
       const cy = h / 2;
-      const R = 180; // Radio en píxeles
+      const R = 180;
 
       ctx.clearRect(0, 0, w, h);
 
-      // Fondo blanco puro
-      ctx.fillStyle = "#ffffff";
+      // Fondo negro estricto
+      ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, w, h);
 
       // Cuadrícula suave
-      ctx.strokeStyle = "#f1f5f9";
+      ctx.strokeStyle = "#162033";
       ctx.lineWidth = 1;
       const step = 40;
       for (let x = 0; x <= w; x += step) {
@@ -722,26 +736,35 @@
       }
 
       // Ejes Cartesiano X e Y
-      ctx.strokeStyle = "#94a3b8";
+      ctx.strokeStyle = "#475569";
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(20, cy);
-      ctx.lineTo(w - 20, cy);
-      ctx.moveTo(cx, 20);
-      ctx.lineTo(cx, h - 20);
+      ctx.moveTo(25, cy);
+      ctx.lineTo(w - 25, cy);
+      ctx.moveTo(cx, 25);
+      ctx.lineTo(cx, h - 25);
       ctx.stroke();
 
-      // Flechas y marcas en ejes
-      ctx.fillStyle = "#64748b";
-      ctx.font = "11px system-ui";
-      ctx.fillText("X", w - 16, cy - 8);
-      ctx.fillText("Y", cx + 8, 28);
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "bold 12px system-ui";
+      ctx.fillText("X", w - 18, cy - 8);
+      ctx.fillText("Y", cx + 8, 22);
+      ctx.font = "bold 11px monospace";
       ctx.fillText("+1", cx + R - 6, cy + 18);
       ctx.fillText("-1", cx - R - 14, cy + 18);
       ctx.fillText("+1", cx + 8, cy - R + 4);
       ctx.fillText("-1", cx + 8, cy + R + 14);
 
-      // Escala de radianes en fracciones de Pi (periferia)
+      // Circunferencia principal R = 1
+      ctx.strokeStyle = "#e2e8f0";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // =========================================================================
+      // VALORES Y PUNTOS NOTABLES INTERMEDIOS (π/6, π/4, π/3, etc.) SOBRE LA CIRCUNFERENCIA
+      // =========================================================================
       const notableAngles = [
         { deg: 0, rad: "0" },
         { deg: 30, rad: "π/6" },
@@ -761,71 +784,72 @@
         { deg: 330, rad: "11π/6" }
       ];
 
-      ctx.font = "10px monospace";
-      ctx.fillStyle = "#64748b";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
 
       notableAngles.forEach(pt => {
         const radAngle = (pt.deg * Math.PI) / 180;
-        const tickR1 = R - 4;
-        const tickR2 = R + 4;
-        const tx1 = cx + tickR1 * Math.cos(radAngle);
-        const ty1 = cy - tickR1 * Math.sin(radAngle);
-        const tx2 = cx + tickR2 * Math.cos(radAngle);
-        const ty2 = cy - tickR2 * Math.sin(radAngle);
+        const ptCos = Math.cos(radAngle);
+        const ptSin = Math.sin(radAngle);
 
-        ctx.strokeStyle = "#cbd5e1";
+        // Marca de punto sobre la circunferencia
+        const circX = cx + R * ptCos;
+        const circY = cy - R * ptSin;
+        ctx.fillStyle = "#38bdf8";
         ctx.beginPath();
-        ctx.moveTo(tx1, ty1);
-        ctx.lineTo(tx2, ty2);
+        ctx.arc(circX, circY, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Trazo radial pequeño hacia fuera
+        const tickR1 = R - 4;
+        const tickR2 = R + 5;
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cx + tickR1 * ptCos, cy - tickR1 * ptSin);
+        ctx.lineTo(cx + tickR2 * ptCos, cy - tickR2 * ptSin);
         ctx.stroke();
 
-        const labelR = R + 22;
-        const lx = cx + labelR * Math.cos(radAngle);
-        const ly = cy - labelR * Math.sin(radAngle);
+        // Rótulo exterior en fracciones de Pi
+        const labelR = R + 26;
+        const lx = cx + labelR * ptCos;
+        const ly = cy - labelR * ptSin;
+        ctx.font = "bold 13px 'Fira Code', monospace";
+        ctx.fillStyle = "#38bdf8";
         ctx.fillText(pt.rad, lx, ly);
       });
 
-      // Circunferencia goniométrica principal R=1
-      ctx.strokeStyle = "#0f172a";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Cálculo angular
       const alphaRad = (angleDeg * Math.PI) / 180;
-      const px = cx + R * Math.cos(alphaRad);
-      const py = cy - R * Math.sin(alphaRad);
+      const cosA = Math.cos(alphaRad);
+      const sinA = Math.sin(alphaRad);
+      const px = cx + R * cosA;
+      const py = cy - R * sinA;
 
-      // Arco del ángulo alpha
-      ctx.fillStyle = "rgba(37, 99, 235, 0.12)";
+      // Arco del ángulo central
+      ctx.fillStyle = "rgba(56, 189, 248, 0.22)";
       ctx.beginPath();
       ctx.moveTo(cx, cy);
-      ctx.arc(cx, cy, 38, 0, -alphaRad, true);
+      ctx.arc(cx, cy, 46, 0, -alphaRad, true);
       ctx.closePath();
       ctx.fill();
 
-      ctx.strokeStyle = "#2563eb";
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(cx, cy, 38, 0, -alphaRad, true);
+      ctx.arc(cx, cy, 46, 0, -alphaRad, true);
       ctx.stroke();
 
-      // Etiqueta del ángulo interior (fracción irreducible de pi)
-      ctx.fillStyle = "#1e3a8a";
-      ctx.font = "bold 11px system-ui";
+      // Ángulo central sexagesimal
       const midAngle = alphaRad / 2;
-      const textArcR = 54;
-      ctx.fillText(degToPiFraction(angleDeg), cx + textArcR * Math.cos(midAngle), cy - textArcR * Math.sin(midAngle));
+      const textArcR = 64;
+      ctx.fillStyle = "#facc15";
+      ctx.font = "bold 13px system-ui, sans-serif";
+      ctx.fillText(`${Math.round(angleDeg)}°`, cx + textArcR * Math.cos(midAngle), cy - textArcR * Math.sin(midAngle));
 
-      // Líneas tangenciales auxiliares (x = 1 y y = 1)
-      const drawTanLines = chkTan.checked || chkSec.checked;
-      const drawCotLines = chkCot.checked || chkCsc.checked;
-
-      if (drawTanLines) {
-        ctx.strokeStyle = "#fcd34d";
+      // Rectas tangenciales fijas en x = 1 e y = 1
+      if (chkTan.checked) {
+        ctx.strokeStyle = "#78350f";
+        ctx.lineWidth = 1.2;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(cx + R, 20);
@@ -834,8 +858,9 @@
         ctx.setLineDash([]);
       }
 
-      if (drawCotLines) {
-        ctx.strokeStyle = "#a5f3fc";
+      if (chkCot.checked) {
+        ctx.strokeStyle = "#164e63";
+        ctx.lineWidth = 1.2;
         ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(20, cy - R);
@@ -844,117 +869,207 @@
         ctx.setLineDash([]);
       }
 
-      // 1. COSENO (Base en eje X)
+      // Recta tangente punteada en P para secante y cosecante
+      if (chkSec.checked || chkCsc.checked) {
+        const secVal = Math.abs(cosA) > 1e-4 ? 1 / cosA : null;
+        const cscVal = Math.abs(sinA) > 1e-4 ? 1 / sinA : null;
+
+        ctx.strokeStyle = "#f8fafc";
+        ctx.lineWidth = 1.6;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+
+        if (secVal !== null && cscVal !== null) {
+          const sx = cx + R * secVal;
+          const sy = cy;
+          const cx_axis = cx;
+          const cy_axis = cy - R * cscVal;
+          const dx = sx - cx_axis;
+          const dy = sy - cy_axis;
+          ctx.moveTo(cx_axis - 0.25 * dx, cy_axis - 0.25 * dy);
+          ctx.lineTo(sx + 0.25 * dx, sy + 0.25 * dy);
+        } else {
+          const ext = 600;
+          ctx.moveTo(px - ext * (-sinA), py - ext * cosA);
+          ctx.lineTo(px + ext * (-sinA), py + ext * cosA);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // 1. COSENO
       if (chkCos.checked) {
-        ctx.strokeStyle = "var(--c-cos)";
-        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = "#60a5fa";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(px, cy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.strokeStyle = "#3b82f6";
+        ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(px, cy);
         ctx.stroke();
+
+        drawAxisMarker(px, cy, "#3b82f6");
       }
 
-      // 2. SENO (Segmento vertical)
+      // 2. SENO
       if (chkSin.checked) {
-        ctx.strokeStyle = "var(--c-sin)";
-        ctx.lineWidth = 3.5;
+        ctx.strokeStyle = "#10b981";
+        ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(px, cy);
         ctx.lineTo(px, py);
         ctx.stroke();
 
-        // Proyección al eje Y punteada
-        ctx.strokeStyle = "#86efac";
-        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = "#34d399";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
         ctx.beginPath();
         ctx.moveTo(px, py);
         ctx.lineTo(cx, py);
         ctx.stroke();
         ctx.setLineDash([]);
+
+        ctx.strokeStyle = "rgba(16, 185, 129, 0.4)";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx, py);
+        ctx.stroke();
+
+        drawAxisMarker(cx, py, "#10b981");
       }
 
-      // 3. TANGENTE (Sobre x = 1)
-      if (chkTan.checked && Math.abs(Math.cos(alphaRad)) > 1e-4) {
+      // 3. TANGENTE
+      if (chkTan.checked && Math.abs(cosA) > 1e-4) {
         const tanVal = Math.tan(alphaRad);
         const tanY = cy - R * tanVal;
-        ctx.strokeStyle = "var(--c-tan)";
-        ctx.lineWidth = 3.5;
+
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(cx + R, cy);
         ctx.lineTo(cx + R, tanY);
         ctx.stroke();
+
+        ctx.strokeStyle = "#fbbf24";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.moveTo(cx + R, tanY);
+        ctx.lineTo(cx, tanY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        drawAxisMarker(cx + R, tanY, "#f59e0b");
+        drawAxisMarker(cx, tanY, "#fbbf24");
       }
 
-      // 4. COTANGENTE (Sobre y = 1)
-      if (chkCot.checked && Math.abs(Math.sin(alphaRad)) > 1e-4) {
-        const cotVal = 1 / Math.tan(alphaRad);
+      // 4. COTANGENTE
+      if (chkCot.checked && Math.abs(sinA) > 1e-4) {
+        const cotVal = cosA / sinA;
         const cotX = cx + R * cotVal;
-        ctx.strokeStyle = "var(--c-cot)";
-        ctx.lineWidth = 3.5;
+
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cotX, cy - R);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.strokeStyle = "#06b6d4";
+        ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(cx, cy - R);
         ctx.lineTo(cotX, cy - R);
         ctx.stroke();
+
+        ctx.strokeStyle = "#67e8f9";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.moveTo(cotX, cy - R);
+        ctx.lineTo(cotX, cy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        drawAxisMarker(cotX, cy - R, "#06b6d4");
+        drawAxisMarker(cotX, cy, "#67e8f9");
       }
 
-      // 5. SECANTE (Desde el centro por la recta secante hasta x=1)
-      if (chkSec.checked && Math.abs(Math.cos(alphaRad)) > 1e-4) {
-        const secVal = 1 / Math.cos(alphaRad);
+      // 5. SECANTE
+      if (chkSec.checked && Math.abs(cosA) > 1e-4) {
+        const secVal = 1 / cosA;
         const secX = cx + R * secVal;
-        ctx.strokeStyle = "var(--c-sec)";
-        ctx.lineWidth = 2.5;
+
+        ctx.strokeStyle = "#a855f7";
+        ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(secX, cy);
         ctx.stroke();
+
+        drawAxisMarker(secX, cy, "#a855f7");
       }
 
-      // 6. COSECANTE (Desde el centro en el eje vertical hasta corte)
-      if (chkCsc.checked && Math.abs(Math.sin(alphaRad)) > 1e-4) {
-        const cscVal = 1 / Math.sin(alphaRad);
+      // 6. COSECANTE
+      if (chkCsc.checked && Math.abs(sinA) > 1e-4) {
+        const cscVal = 1 / sinA;
         const cscY = cy - R * cscVal;
-        ctx.strokeStyle = "var(--c-csc)";
-        ctx.lineWidth = 2.5;
+
+        ctx.strokeStyle = "#ec4899";
+        ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(cx, cy);
         ctx.lineTo(cx, cscY);
         ctx.stroke();
+
+        drawAxisMarker(cx, cscY, "#ec4899");
       }
 
-      // Prolongación de la recta radial
-      ctx.strokeStyle = "#cbd5e1";
-      ctx.lineWidth = 1;
+      // Prolongación radial de referencia
+      ctx.strokeStyle = "#334155";
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([3, 4]);
       ctx.beginPath();
       ctx.moveTo(cx - (px - cx) * 2, cy - (py - cy) * 2);
       ctx.lineTo(cx + (px - cx) * 2, cy + (py - cy) * 2);
       ctx.stroke();
+      ctx.setLineDash([]);
 
-      // Radio vector (Centro -> Punto P)
-      ctx.strokeStyle = "#1e293b";
+      // Radio vector
+      ctx.strokeStyle = "#f8fafc";
       ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(px, py);
       ctx.stroke();
 
-      // Punto P sobre la circunferencia
-      ctx.fillStyle = "#2563eb";
+      // Punto P
+      ctx.fillStyle = "#38bdf8";
       ctx.beginPath();
-      ctx.arc(px, py, 6, 0, Math.PI * 2);
+      ctx.arc(px, py, 6.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 2;
       ctx.stroke();
 
       // Rótulo P(cos, sen)
-      ctx.fillStyle = "#0f172a";
+      ctx.fillStyle = "#f8fafc";
       ctx.font = "bold 12px monospace";
       ctx.textAlign = (px >= cx) ? "left" : "right";
-      const offsetX = (px >= cx) ? 10 : -10;
-      ctx.fillText(`P (${Math.cos(alphaRad).toFixed(2)}, ${Math.sin(alphaRad).toFixed(2)})`, px + offsetX, py - 8);
+      const offsetX = (px >= cx) ? 12 : -12;
+      ctx.fillText(`P (${cosA.toFixed(2)}, ${sinA.toFixed(2)})`, px + offsetX, py - 8);
     }
 
-    // Inicialización al cargar la ventana
     window.onload = () => {
       setAngle(45);
     };
